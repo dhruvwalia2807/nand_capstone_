@@ -1,0 +1,19 @@
+// Stores the larger of RAM[0] and RAM[1] in RAM[2]
+@R0
+D=M
+@R1
+D=D-M
+@LEFT
+D;JGT
+@R1
+D=M
+@R2
+M=D
+@END
+0;JMP
+(LEFT)
+@R0
+D=M
+@R2
+M=D
+(END)

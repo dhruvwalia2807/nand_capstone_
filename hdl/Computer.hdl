@@ -1,0 +1,9 @@
+// Top-level Hack computer: instruction ROM, CPU and data memory.
+CHIP Computer {
+ IN reset;
+ PARTS:
+ ROM32K(address=pc,out=instruction);
+ CPU(inM=memoryValue,instruction=instruction,reset=reset,
+     outM=writeValue,writeM=writeEnable,addressM=memoryAddress,pc=pc);
+ Memory(in=writeValue,load=writeEnable,address=memoryAddress,out=memoryValue);
+}

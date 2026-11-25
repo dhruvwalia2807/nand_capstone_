@@ -1,0 +1,22 @@
+// Draw a short horizontal rectangle-like screen row
+@SCREEN
+D=A
+@ptr
+M=D
+@16
+D=A
+@n
+M=D
+(LOOP)
+@ptr
+A=M
+M=-1
+@ptr
+M=M+1
+@n
+MD=M-1
+@LOOP
+D;JGT
+(END)
+@END
+0;JMP

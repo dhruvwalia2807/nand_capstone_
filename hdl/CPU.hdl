@@ -1,0 +1,27 @@
+// Hack CPU interface and datapath design reference.
+CHIP CPU {
+ IN inM[16], instruction[16], reset;
+ OUT outM[16], writeM, addressM[15], pc[15];
+ PARTS:
+ Not(in=instruction[15], out=isA);
+ Mux16(a=instruction, b=aluResult, sel=instruction[15], out=aInput);
+ And(a=instruction[15], b=instruction[5], out=loadAFromC);
+ Or(a=isA, b=loadAFromC, out=loadA);
+ ARegister(in=aInput, load=loadA, out=aValue, out[0..14]=addressM);
+ Mux16(a=aValue, b=inM, sel=instruction[12], out=yValue);
+ And(a=instruction[15], b=instruction[4], out=loadD);
+ DRegister(in=aluResult, load=loadD, out=dValue);
+ ALU(x=dValue,y=yValue,zx=instruction[11],nx=instruction[10],
+     zy=instruction[9],ny=instruction[8],f=instruction[7],no=instruction[6],
+     out=aluResult,out=outM,zr=isZero,ng=isNegative);
+ And(a=instruction[15],b=instruction[3],out=writeM);
+ Or(a=isZero,b=isNegative,out=notPositive);
+ Not(in=notPositive,out=isPositive);
+ And(a=instruction[2],b=isNegative,out=jumpLT);
+ And(a=instruction[1],b=isZero,out=jumpEQ);
+ And(a=instruction[0],b=isPositive,out=jumpGT);
+ Or(a=jumpLT,b=jumpEQ,out=jumpLE);
+ Or(a=jumpLE,b=jumpGT,out=jumpAny);
+ And(a=instruction[15],b=jumpAny,out=doJump);
+ PC(in=aValue,load=doJump,inc=true,reset=reset,out[0..14]=pc);
+}
